@@ -1,0 +1,62 @@
+version: '3.4'
+
+x-leprikon: &leprikon
+  image: qbsoftware/domecekhorovice
+  depends_on:
+    - mysql
+    - redis
+  environment:
+    DATABASE_ENGINE: django.db.backends.mysql
+    DATABASE_HOST: ''
+    DATABASE_NAME: domecekhorovice
+    DATABASE_USER: domecekhorovice
+    DATABASE_PASSWORD: dbpassword
+    EMAIL_HOST: smtp.savana.cz
+    EMAIL_HOST_USER: domecekhorovice@leprikon.cz
+    EMAIL_HOST_PASSWORD: emailpassword
+    EMAIL_SUBJECT_PREFIX: '[Domeček Hořovice]'
+    CACHE_LOCATION: unix:///var/run/redis/redis.sock
+    SECRET_KEY: secretkey
+    SENTRY_ENVIRONMENT: 'domecekhorovice'
+    SERVER_EMAIL: '"Domeček Hořovice" <domecekhorovice@leprikon.cz>'
+    SUPERVISORD_RUN: "gunicorn cron"
+    GUNICORN_OPTIONS: "--workers 3"
+  volumes:
+    - ./data:/app/data
+    - ./media:/app/htdocs/media
+    - ./static:/app/htdocs/static
+    - ./run:/app/run
+    - mysql:/var/run/mysqld
+    - redis:/var/run/redis
+
+services:
+
+  leprikon:
+    <<: *leprikon
+    build: .
+
+  leprikon-collectstatic:
+    <<: *leprikon
+    command: leprikon collectstatic --no-input
+
+  redis:
+    image: redis
+    command: bash -c "chmod 0777 /var/run/redis && redis-server --appendonly yes --unixsocket /var/run/redis/redis.sock --unixsocketperm 777"
+    volumes:
+      - ./redis:/data
+      - redis:/var/run/redis
+
+  mysql:
+    image: mariadb
+    environment:
+      MYSQL_DATABASE: domecekhorovice
+      MYSQL_USER: domecekhorovice
+      MYSQL_PASSWORD: dbpassword
+      MYSQL_ROOT_PASSWORD: rootdbpassword
+    volumes:
+      - mysql:/var/run/mysqld
+      - ./mysql:/var/lib/mysql
+
+volumes:
+  mysql:
+  redis:

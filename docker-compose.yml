@@ -5,22 +5,20 @@ x-leprikon: &leprikon
   depends_on:
     - mysql
     - redis
+    - smtprelay
   environment:
     DATABASE_ENGINE: django.db.backends.mysql
     DATABASE_HOST: ''
     DATABASE_NAME: domecekhorovice
     DATABASE_USER: domecekhorovice
     DATABASE_PASSWORD: dbpassword
-    EMAIL_HOST: smtp.savana.cz
-    EMAIL_HOST_USER: domecekhorovice@leprikon.cz
-    EMAIL_HOST_PASSWORD: emailpassword
+    EMAIL_HOST: smtprelay
     EMAIL_SUBJECT_PREFIX: '[Domeček Hořovice]'
     CACHE_LOCATION: unix:///var/run/redis/redis.sock
     SECRET_KEY: secretkey
     SENTRY_ENVIRONMENT: 'domecekhorovice'
     SERVER_EMAIL: '"Domeček Hořovice" <domecekhorovice@leprikon.cz>'
     SUPERVISORD_RUN: "gunicorn cron"
-    GUNICORN_OPTIONS: "--workers 3"
   volumes:
     - ./data:/app/data
     - ./media:/app/htdocs/media
@@ -56,6 +54,15 @@ services:
     volumes:
       - mysql:/var/run/mysqld
       - ./mysql:/var/lib/mysql
+
+  smtprelay:
+    image: juanluisbaptiste/postfix
+    environment:
+      SERVER_HOSTNAME: leprikon.cz
+      SMTP_SERVER: smtp.savana.cz
+      SMTP_PORT: 465
+      SMTP_USERNAME: domecekhorovice@leprikon.cz
+      SMTP_PASSWORD: emailpassword
 
 volumes:
   mysql:

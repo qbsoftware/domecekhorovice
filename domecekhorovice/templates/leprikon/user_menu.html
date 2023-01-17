@@ -1,0 +1,13 @@
+{% load menu_tags %}
+
+{% for child in children %}
+<li>
+  <a class="dropdown-item" href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">
+    {% if child.attr.social_backend %}
+    <button class="btn btn-block btn-sm btn-social btn-{{ child.attr.social_btn }}">
+      <i class="fa fa-{{ child.attr.social_btn }} pull-left"></i>
+         {{ child.get_menu_title }}
+     </button>{% else %}{{ child.get_menu_title }}{% endif %}
+    </a>
+</li>
+{% endfor %}

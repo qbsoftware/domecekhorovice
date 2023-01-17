@@ -1,0 +1,10 @@
+{% load menu_tags static %}
+
+{% for child in children %}
+<a href="{{ child.attr.redirect_url|default:child.get_absolute_url }}" class="child{% if child.selected %} selected{% endif %}{% if child.ancestor %} ancestor{% endif %}{% if child.sibling %} sibling{% endif %}{% if child.descendant %} descendant{% endif %}">{{ child.get_menu_title }}</a>
+{% if child.children %}
+<div class="submenu">
+    {% show_menu from_level to_level extra_inactive extra_active template "" "" child %}
+</div>
+{% endif %}
+{% endfor %}

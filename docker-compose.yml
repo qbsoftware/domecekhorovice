@@ -4,6 +4,7 @@ x-leprikon: &leprikon
   image: qbsoftware/domecekhorovice
   depends_on:
     - mysql
+    - postgres
     - redis
     - smtprelay
   environment:
@@ -54,6 +55,15 @@ services:
     volumes:
       - mysql:/var/run/mysqld
       - ./mysql:/var/lib/mysql
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: domecekhorovice
+      POSTGRES_USER: domecekhorovice
+      POSTGRES_PASSWORD: dbpassword
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
 
   smtprelay:
     image: juanluisbaptiste/postfix

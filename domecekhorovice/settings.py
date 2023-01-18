@@ -9,6 +9,7 @@ from leprikon.site.settings import *
 INSTALLED_APPS = (
     [
         "domecekhorovice",
+        "domecekhorovice.old",
     ]
     + INSTALLED_APPS
     + [
@@ -33,6 +34,17 @@ INSTALLED_APPS = (
         # "djangocms_bootstrap5.contrib.bootstrap5_utilities",
     ]
 )
+
+DATABASES["old"] = {
+    "ENGINE": "django.db.backends.postgresql",
+    "NAME": "domecekhorovice",
+    "HOST": "postgres",
+    "PORT": 5432,
+    "USER": "domecekhorovice",
+    "PASSWORD": os.environ.get("DATABASE_PASSWORD", None),
+}
+
+DATABASE_ROUTERS = ["domecekhorovice.old.OldRouter"]
 
 CMS_TEMPLATES = [
     ("default.html", "Výchozí"),

@@ -43,6 +43,13 @@ DATABASES["old"] = {
     "USER": "domecekhorovice",
     "PASSWORD": os.environ.get("DATABASE_PASSWORD", None),
 }
+try:
+    DATABASES["default"]["OPTIONS"]["init_command"] = (
+        DATABASES["default"]["OPTIONS"]["init_command"]
+        + " ALTER TABLE auth_user MODIFY username VARCHAR(150) NOT NULL COLLATE utf8mb4_bin;"
+    )
+except KeyError:
+    pass
 
 DATABASE_ROUTERS = ["domecekhorovice.old.OldRouter"]
 

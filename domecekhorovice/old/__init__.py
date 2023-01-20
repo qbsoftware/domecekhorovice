@@ -11,10 +11,7 @@ class OldRouter:
             return self.db_name
 
     def allow_relation(self, obj1, obj2, **hints):
-        if (
-            obj1._meta.app_label == self.app_label
-            or obj2._meta.app_label == self.app_label
-        ):
+        if obj1._meta.app_label == self.app_label or obj2._meta.app_label == self.app_label:
             return False
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):

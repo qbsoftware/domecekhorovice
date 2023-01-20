@@ -82,6 +82,10 @@ nav.menu .submenu {
   font-size: 80%;
 }
 
+.active > .page-link {
+  background-color: #3F4F54;
+}
+
 .dark {
   background-color: #3F4F54;
   padding: 15px;

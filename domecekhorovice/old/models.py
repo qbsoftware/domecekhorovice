@@ -17,8 +17,8 @@ class AuthGroup(models.Model):
 
 
 class AuthGroupPermissions(models.Model):
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-    permission = models.ForeignKey("AuthPermission", models.DO_NOTHING)
+    group = models.ForeignKey(AuthGroup, models.PROTECT)
+    permission = models.ForeignKey("AuthPermission", models.PROTECT)
 
     class Meta:
         managed = False
@@ -28,7 +28,7 @@ class AuthGroupPermissions(models.Model):
 
 class AuthPermission(models.Model):
     name = models.CharField(max_length=255)
-    content_type = models.ForeignKey("DjangoContentType", models.DO_NOTHING)
+    content_type = models.ForeignKey("DjangoContentType", models.PROTECT)
     codename = models.CharField(max_length=100)
 
     class Meta:
@@ -55,8 +55,8 @@ class AuthUser(models.Model):
 
 
 class AuthUserGroups(models.Model):
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+    user = models.ForeignKey(AuthUser, models.PROTECT)
+    group = models.ForeignKey(AuthGroup, models.PROTECT)
 
     class Meta:
         managed = False
@@ -65,8 +65,8 @@ class AuthUserGroups(models.Model):
 
 
 class AuthUserUserPermissions(models.Model):
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
+    user = models.ForeignKey(AuthUser, models.PROTECT)
+    permission = models.ForeignKey(AuthPermission, models.PROTECT)
 
     class Meta:
         managed = False
@@ -81,14 +81,10 @@ class CalendariumEvent(models.Model):
     description = models.TextField()
     end_recurring_period = models.DateTimeField(blank=True, null=True)
     title = models.CharField(max_length=256)
-    category = models.ForeignKey(
-        "CalendariumEventcategory", models.DO_NOTHING, blank=True, null=True
-    )
+    category = models.ForeignKey("CalendariumEventcategory", models.PROTECT, blank=True, null=True)
     created_by_id = models.IntegerField(blank=True, null=True)
-    image = models.ForeignKey("FilerImage", models.DO_NOTHING, blank=True, null=True)
-    rule = models.ForeignKey(
-        "CalendariumRule", models.DO_NOTHING, blank=True, null=True
-    )
+    image = models.ForeignKey("FilerImage", models.PROTECT, blank=True, null=True)
+    rule = models.ForeignKey("CalendariumRule", models.PROTECT, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -99,7 +95,7 @@ class CalendariumEventcategory(models.Model):
     name = models.CharField(max_length=256)
     slug = models.CharField(max_length=256)
     color = models.CharField(max_length=6)
-    parent = models.ForeignKey("self", models.DO_NOTHING, blank=True, null=True)
+    parent = models.ForeignKey("self", models.PROTECT, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -109,8 +105,8 @@ class CalendariumEventcategory(models.Model):
 class CalendariumEventrelation(models.Model):
     object_id = models.IntegerField()
     relation_type = models.CharField(max_length=32, blank=True, null=True)
-    content_type = models.ForeignKey("DjangoContentType", models.DO_NOTHING)
-    event = models.ForeignKey(CalendariumEvent, models.DO_NOTHING)
+    content_type = models.ForeignKey("DjangoContentType", models.PROTECT)
+    event = models.ForeignKey(CalendariumEvent, models.PROTECT)
 
     class Meta:
         managed = False
@@ -126,8 +122,8 @@ class CalendariumOccurrence(models.Model):
     original_end = models.DateTimeField()
     cancelled = models.BooleanField()
     title = models.CharField(max_length=256)
-    created_by = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
-    event = models.ForeignKey(CalendariumEvent, models.DO_NOTHING)
+    created_by = models.ForeignKey(AuthUser, models.PROTECT, blank=True, null=True)
+    event = models.ForeignKey(CalendariumEvent, models.PROTECT)
 
     class Meta:
         managed = False
@@ -151,9 +147,7 @@ class DjangoAdminLog(models.Model):
     object_repr = models.CharField(max_length=200)
     action_flag = models.SmallIntegerField()
     change_message = models.TextField()
-    content_type = models.ForeignKey(
-        "DjangoContentType", models.DO_NOTHING, blank=True, null=True
-    )
+    content_type = models.ForeignKey("DjangoContentType", models.PROTECT, blank=True, null=True)
     user_id = models.IntegerField()
 
     class Meta:
@@ -206,7 +200,7 @@ class EasyThumbnailsThumbnail(models.Model):
     storage_hash = models.CharField(max_length=40)
     name = models.CharField(max_length=255)
     modified = models.DateTimeField()
-    source = models.ForeignKey(EasyThumbnailsSource, models.DO_NOTHING)
+    source = models.ForeignKey(EasyThumbnailsSource, models.PROTECT)
 
     class Meta:
         managed = False
@@ -215,7 +209,7 @@ class EasyThumbnailsThumbnail(models.Model):
 
 
 class EasyThumbnailsThumbnaildimensions(models.Model):
-    thumbnail = models.OneToOneField(EasyThumbnailsThumbnail, models.DO_NOTHING)
+    thumbnail = models.OneToOneField(EasyThumbnailsThumbnail, models.PROTECT)
     width = models.IntegerField(blank=True, null=True)
     height = models.IntegerField(blank=True, null=True)
 
@@ -233,8 +227,8 @@ class FilerClipboard(models.Model):
 
 
 class FilerClipboarditem(models.Model):
-    clipboard = models.ForeignKey(FilerClipboard, models.DO_NOTHING)
-    file = models.ForeignKey("FilerFile", models.DO_NOTHING)
+    clipboard = models.ForeignKey(FilerClipboard, models.PROTECT)
+    file = models.ForeignKey("FilerFile", models.PROTECT)
 
     class Meta:
         managed = False
@@ -254,11 +248,9 @@ class FilerFile(models.Model):
     uploaded_at = models.DateTimeField()
     modified_at = models.DateTimeField()
     is_public = models.BooleanField()
-    folder = models.ForeignKey("FilerFolder", models.DO_NOTHING, blank=True, null=True)
-    owner = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
-    polymorphic_ctype = models.ForeignKey(
-        DjangoContentType, models.DO_NOTHING, blank=True, null=True
-    )
+    folder = models.ForeignKey("FilerFolder", models.PROTECT, blank=True, null=True)
+    owner = models.ForeignKey(AuthUser, models.PROTECT, blank=True, null=True)
+    polymorphic_ctype = models.ForeignKey(DjangoContentType, models.PROTECT, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -274,8 +266,8 @@ class FilerFolder(models.Model):
     rght = models.IntegerField()
     tree_id = models.IntegerField()
     level = models.IntegerField()
-    owner = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
-    parent = models.ForeignKey("self", models.DO_NOTHING, blank=True, null=True)
+    owner = models.ForeignKey(AuthUser, models.PROTECT, blank=True, null=True)
+    parent = models.ForeignKey("self", models.PROTECT, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -289,9 +281,9 @@ class FilerFolderpermission(models.Model):
     can_edit = models.SmallIntegerField(blank=True, null=True)
     can_read = models.SmallIntegerField(blank=True, null=True)
     can_add_children = models.SmallIntegerField(blank=True, null=True)
-    folder = models.ForeignKey(FilerFolder, models.DO_NOTHING, blank=True, null=True)
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING, blank=True, null=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
+    folder = models.ForeignKey(FilerFolder, models.PROTECT, blank=True, null=True)
+    group = models.ForeignKey(AuthGroup, models.PROTECT, blank=True, null=True)
+    user = models.ForeignKey(AuthUser, models.PROTECT, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -299,7 +291,7 @@ class FilerFolderpermission(models.Model):
 
 
 class FilerImage(models.Model):
-    file_ptr = models.OneToOneField(FilerFile, models.DO_NOTHING, primary_key=True)
+    file_ptr = models.OneToOneField(FilerFile, models.PROTECT, primary_key=True)
     field_height = models.IntegerField(
         db_column="_height", blank=True, null=True
     )  # Field renamed because it started with '_'.
@@ -323,17 +315,13 @@ class FotogalerieGalleries(models.Model):
     title = models.CharField(max_length=500)
     desc = models.TextField()
     image = models.CharField(max_length=100)
-    akce = models.ForeignKey("MainAkce", models.DO_NOTHING, blank=True, null=True)
-    kurzy = models.ForeignKey("MainKurzy", models.DO_NOTHING, blank=True, null=True)
-    lide = models.ForeignKey("MainLide", models.DO_NOTHING, blank=True, null=True)
-    pracoviste = models.ForeignKey(
-        "MainPracoviste", models.DO_NOTHING, blank=True, null=True
-    )
-    souteze = models.ForeignKey("MainSouteze", models.DO_NOTHING, blank=True, null=True)
-    tabory = models.ForeignKey("MainTabory", models.DO_NOTHING, blank=True, null=True)
-    zakladny = models.ForeignKey(
-        "MainZakladny", models.DO_NOTHING, blank=True, null=True
-    )
+    akce = models.ForeignKey("MainAkce", models.PROTECT, blank=True, null=True)
+    kurzy = models.ForeignKey("MainKurzy", models.PROTECT, blank=True, null=True)
+    lide = models.ForeignKey("MainLide", models.PROTECT, blank=True, null=True)
+    pracoviste = models.ForeignKey("MainPracoviste", models.PROTECT, blank=True, null=True)
+    souteze = models.ForeignKey("MainSouteze", models.PROTECT, blank=True, null=True)
+    tabory = models.ForeignKey("MainTabory", models.PROTECT, blank=True, null=True)
+    zakladny = models.ForeignKey("MainZakladny", models.PROTECT, blank=True, null=True)
     datum = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -345,7 +333,7 @@ class FotogaleriePhotos(models.Model):
     title = models.CharField(max_length=500)
     desc = models.CharField(max_length=500)
     image = models.CharField(max_length=100)
-    gallery = models.ForeignKey(FotogalerieGalleries, models.DO_NOTHING)
+    gallery = models.ForeignKey(FotogalerieGalleries, models.PROTECT)
     kronika = models.BooleanField()
 
     class Meta:
@@ -355,7 +343,7 @@ class FotogaleriePhotos(models.Model):
 
 class GdprGdpr(models.Model):
     text = models.TextField()
-    rok = models.ForeignKey("MainRoky", models.DO_NOTHING)
+    rok = models.ForeignKey("MainRoky", models.PROTECT)
 
     class Meta:
         managed = False
@@ -364,8 +352,8 @@ class GdprGdpr(models.Model):
 
 class GdprLoggdpr(models.Model):
     datum = models.DateTimeField()
-    gdpr = models.ForeignKey(GdprGdpr, models.DO_NOTHING)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    gdpr = models.ForeignKey(GdprGdpr, models.PROTECT)
+    user = models.ForeignKey(AuthUser, models.PROTECT)
 
     class Meta:
         managed = False
@@ -375,7 +363,7 @@ class GdprLoggdpr(models.Model):
 class HappeningsCancellation(models.Model):
     reason = models.CharField(max_length=255)
     date = models.DateField()
-    event = models.ForeignKey("HappeningsEvent", models.DO_NOTHING)
+    event = models.ForeignKey("HappeningsEvent", models.PROTECT)
 
     class Meta:
         managed = False
@@ -410,8 +398,8 @@ class HappeningsEvent(models.Model):
 
 
 class HappeningsEventCategories(models.Model):
-    event = models.ForeignKey(HappeningsEvent, models.DO_NOTHING)
-    category = models.ForeignKey(HappeningsCategory, models.DO_NOTHING)
+    event = models.ForeignKey(HappeningsEvent, models.PROTECT)
+    category = models.ForeignKey(HappeningsCategory, models.PROTECT)
 
     class Meta:
         managed = False
@@ -420,8 +408,8 @@ class HappeningsEventCategories(models.Model):
 
 
 class HappeningsEventLocation(models.Model):
-    event = models.ForeignKey(HappeningsEvent, models.DO_NOTHING)
-    location = models.ForeignKey("HappeningsLocation", models.DO_NOTHING)
+    event = models.ForeignKey(HappeningsEvent, models.PROTECT)
+    location = models.ForeignKey("HappeningsLocation", models.PROTECT)
 
     class Meta:
         managed = False
@@ -430,8 +418,8 @@ class HappeningsEventLocation(models.Model):
 
 
 class HappeningsEventTags(models.Model):
-    event = models.ForeignKey(HappeningsEvent, models.DO_NOTHING)
-    tag = models.ForeignKey("HappeningsTag", models.DO_NOTHING)
+    event = models.ForeignKey(HappeningsEvent, models.PROTECT)
+    tag = models.ForeignKey("HappeningsTag", models.PROTECT)
 
     class Meta:
         managed = False
@@ -482,8 +470,8 @@ class KaleidoskopKaleidoskop(models.Model):
     file3 = models.CharField(max_length=100, blank=True, null=True)
     poplatek = models.IntegerField()
     cena_clenove_rc = models.IntegerField()
-    organizator = models.ForeignKey("MainLide", models.DO_NOTHING)
-    rok = models.ForeignKey("MainRoky", models.DO_NOTHING)
+    organizator = models.ForeignKey("MainLide", models.PROTECT)
+    rok = models.ForeignKey("MainRoky", models.PROTECT)
     vs = models.CharField(max_length=4, blank=True, null=True)
     lektor = models.CharField(max_length=255, blank=True, null=True)
     publikovat = models.BooleanField()
@@ -494,7 +482,7 @@ class KaleidoskopKaleidoskop(models.Model):
 
 
 class KaleidoskopKaleidoskopProKoho(models.Model):
-    kaleidoskop = models.ForeignKey(KaleidoskopKaleidoskop, models.DO_NOTHING)
+    kaleidoskop = models.ForeignKey(KaleidoskopKaleidoskop, models.PROTECT)
     pro_koho_id = models.IntegerField()
 
     class Meta:
@@ -508,10 +496,10 @@ class KronikaKronika(models.Model):
     hodnoceni = models.TextField(blank=True, null=True)
     image = models.CharField(max_length=100)
     datum = models.DateTimeField(blank=True, null=True)
-    akce = models.ForeignKey("MainAkce", models.DO_NOTHING, blank=True, null=True)
-    kurzy = models.ForeignKey("MainKurzy", models.DO_NOTHING, blank=True, null=True)
-    souteze = models.ForeignKey("MainSouteze", models.DO_NOTHING, blank=True, null=True)
-    tabory = models.ForeignKey("MainTabory", models.DO_NOTHING, blank=True, null=True)
+    akce = models.ForeignKey("MainAkce", models.PROTECT, blank=True, null=True)
+    kurzy = models.ForeignKey("MainKurzy", models.PROTECT, blank=True, null=True)
+    souteze = models.ForeignKey("MainSouteze", models.PROTECT, blank=True, null=True)
+    tabory = models.ForeignKey("MainTabory", models.PROTECT, blank=True, null=True)
     media = models.CharField(max_length=500, blank=True, null=True)
     pocet = models.IntegerField(blank=True, null=True)
 
@@ -544,7 +532,7 @@ class KrouzkyKrouzkyprideti(models.Model):
     matka_email = models.CharField(max_length=100)
     datum = models.DateTimeField()
     ip = models.GenericIPAddressField(blank=True, null=True)
-    krouzek = models.ForeignKey("MainKrouzky", models.DO_NOTHING, blank=True, null=True)
+    krouzek = models.ForeignKey("MainKrouzky", models.PROTECT, blank=True, null=True)
     upozorneni = models.TextField(blank=True, null=True)
     datum_active = models.DateTimeField(blank=True, null=True)
     datum_storno = models.DateTimeField(blank=True, null=True)
@@ -589,7 +577,7 @@ class MainAkce(models.Model):
 
 
 class MainAkceProKoho(models.Model):
-    akce = models.ForeignKey(MainAkce, models.DO_NOTHING)
+    akce = models.ForeignKey(MainAkce, models.PROTECT)
     pro_koho_id = models.IntegerField()
 
     class Meta:
@@ -604,7 +592,7 @@ class MainKestazeni(models.Model):
     file = models.CharField(max_length=100)
     kam = models.IntegerField()
     trvale = models.BooleanField()
-    roky = models.ForeignKey("MainRoky", models.DO_NOTHING, blank=True, null=True)
+    roky = models.ForeignKey("MainRoky", models.PROTECT, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -627,8 +615,8 @@ class MainKrouzky(models.Model):
     nazev = models.CharField(max_length=255)
     zahajeni = models.CharField(max_length=255)
     zahajeni_public = models.BooleanField()
-    pracoviste = models.ForeignKey("MainPracoviste", models.DO_NOTHING)
-    ucebna = models.ForeignKey("MainUcebny", models.DO_NOTHING)
+    pracoviste = models.ForeignKey("MainPracoviste", models.PROTECT)
+    ucebna = models.ForeignKey("MainUcebny", models.PROTECT)
     popis = models.TextField()
     kapacita = models.IntegerField()
     krouzek_od = models.DateField()
@@ -658,7 +646,7 @@ class MainKrouzky(models.Model):
 
 
 class MainKrouzkyProKoho(models.Model):
-    krouzky = models.ForeignKey(MainKrouzky, models.DO_NOTHING)
+    krouzky = models.ForeignKey(MainKrouzky, models.PROTECT)
     pro_koho_id = models.IntegerField()
 
     class Meta:
@@ -668,8 +656,8 @@ class MainKrouzkyProKoho(models.Model):
 
 
 class MainKrouzkyVedouci(models.Model):
-    krouzky = models.ForeignKey(MainKrouzky, models.DO_NOTHING)
-    lide = models.ForeignKey("MainLide", models.DO_NOTHING)
+    krouzky = models.ForeignKey(MainKrouzky, models.PROTECT)
+    lide = models.ForeignKey("MainLide", models.PROTECT)
 
     class Meta:
         managed = False
@@ -708,7 +696,7 @@ class MainKurzy(models.Model):
 
 
 class MainKurzyProKoho(models.Model):
-    kurzy = models.ForeignKey(MainKurzy, models.DO_NOTHING)
+    kurzy = models.ForeignKey(MainKurzy, models.PROTECT)
     pro_koho_id = models.IntegerField()
 
     class Meta:
@@ -825,7 +813,7 @@ class MainSouteze(models.Model):
 
 
 class MainSoutezeProKoho(models.Model):
-    souteze = models.ForeignKey(MainSouteze, models.DO_NOTHING)
+    souteze = models.ForeignKey(MainSouteze, models.PROTECT)
     pro_koho_id = models.IntegerField()
 
     class Meta:
@@ -840,7 +828,7 @@ class MainSubsection(models.Model):
     keywords = models.CharField(max_length=255)
     description = models.TextField()
     content = models.TextField(blank=True, null=True)
-    section = models.ForeignKey(MainSection, models.DO_NOTHING)
+    section = models.ForeignKey(MainSection, models.PROTECT)
     view = models.BooleanField()
 
     class Meta:
@@ -849,7 +837,7 @@ class MainSubsection(models.Model):
 
 
 class MainTabory(models.Model):
-    zakladna = models.ForeignKey("MainZakladny", models.DO_NOTHING)
+    zakladna = models.ForeignKey("MainZakladny", models.PROTECT)
     nazev = models.CharField(max_length=255)
     tabor_od = models.DateField()
     tabor_do = models.DateField()
@@ -870,7 +858,7 @@ class MainTabory(models.Model):
     cena_ms = models.IntegerField()
     cena_zs = models.IntegerField()
     publikovat = models.BooleanField()
-    rok = models.ForeignKey(MainRoky, models.DO_NOTHING, blank=True, null=True)
+    rok = models.ForeignKey(MainRoky, models.PROTECT, blank=True, null=True)
     neprodavat = models.BooleanField()
 
     class Meta:
@@ -879,7 +867,7 @@ class MainTabory(models.Model):
 
 
 class MainTaboryProKoho(models.Model):
-    tabory = models.ForeignKey(MainTabory, models.DO_NOTHING)
+    tabory = models.ForeignKey(MainTabory, models.PROTECT)
     pro_koho_id = models.IntegerField()
 
     class Meta:
@@ -948,15 +936,9 @@ class NastaveniNastaveni(models.Model):
     splatnost = models.DateField()
     splatnost_tabory = models.DateField(blank=True, null=True)
     krouzky_cena_pulrok = models.IntegerField()
-    krouzky_rok = models.ForeignKey(
-        MainRoky, models.DO_NOTHING, blank=True, null=True, related_name="+"
-    )
-    souteze_rok = models.ForeignKey(
-        MainRoky, models.DO_NOTHING, blank=True, null=True, related_name="+"
-    )
-    tabory_rok = models.ForeignKey(
-        MainRoky, models.DO_NOTHING, blank=True, null=True, related_name="+"
-    )
+    krouzky_rok = models.ForeignKey(MainRoky, models.PROTECT, blank=True, null=True, related_name="+")
+    souteze_rok = models.ForeignKey(MainRoky, models.PROTECT, blank=True, null=True, related_name="+")
+    tabory_rok = models.ForeignKey(MainRoky, models.PROTECT, blank=True, null=True, related_name="+")
 
     class Meta:
         managed = False
@@ -985,12 +967,10 @@ class NotifyNotify(models.Model):
 class OrdersOrderitems(models.Model):
     nazev = models.TextField(blank=True, null=True)
     quantity = models.IntegerField()
-    subtotal = models.DecimalField(
-        max_digits=10, decimal_places=2, blank=True, null=True
-    )
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     product = models.IntegerField(blank=True, null=True)
     pay_half_year = models.BooleanField()
-    order = models.ForeignKey("OrdersOrders", models.DO_NOTHING)
+    order = models.ForeignKey("OrdersOrders", models.PROTECT)
 
     class Meta:
         managed = False
@@ -1005,7 +985,7 @@ class OrdersOrders(models.Model):
     pay_status = models.BooleanField()
     status = models.BooleanField()
     ip = models.GenericIPAddressField(blank=True, null=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    user = models.ForeignKey(AuthUser, models.PROTECT)
     part_payment = models.BooleanField(blank=True, null=True)
 
     class Meta:
@@ -1014,13 +994,11 @@ class OrdersOrders(models.Model):
 
 
 class OrdersPayments(models.Model):
-    order = models.ForeignKey(OrdersOrders, models.DO_NOTHING)
+    order = models.ForeignKey(OrdersOrders, models.PROTECT)
     datum = models.DateField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     pozn = models.TextField(blank=True, null=True)
-    prihlaska = models.ForeignKey(
-        "PrihlaskaPrihlaska", models.DO_NOTHING, blank=True, null=True
-    )
+    prihlaska = models.ForeignKey("PrihlaskaPrihlaska", models.PROTECT, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -1040,8 +1018,8 @@ class PlakatyHomePlakatyhome(models.Model):
 class PrihlaskaKrouzkypresun(models.Model):
     poznamka = models.CharField(max_length=500, blank=True, null=True)
     krouzek_default = models.IntegerField(blank=True, null=True)
-    krouzek = models.ForeignKey(MainKrouzky, models.DO_NOTHING)
-    osoba = models.ForeignKey("PrihlaskaPrihlaska", models.DO_NOTHING)
+    krouzek = models.ForeignKey(MainKrouzky, models.PROTECT)
+    osoba = models.ForeignKey("PrihlaskaPrihlaska", models.PROTECT)
 
     class Meta:
         managed = False
@@ -1072,9 +1050,7 @@ class PrihlaskaPrihlaska(models.Model):
     ip = models.GenericIPAddressField(blank=True, null=True)
     product = models.IntegerField(blank=True, null=True)
     pro_koho = models.IntegerField(blank=True, null=True)
-    order_item = models.ForeignKey(
-        OrdersOrderitems, models.DO_NOTHING, blank=True, null=True
-    )
+    order_item = models.ForeignKey(OrdersOrderitems, models.PROTECT, blank=True, null=True)
     skola = models.CharField(max_length=1000, blank=True, null=True)
     trida = models.CharField(max_length=1000, blank=True, null=True)
     email = models.CharField(max_length=100, blank=True, null=True)
@@ -1114,7 +1090,7 @@ class ProfileProfile(models.Model):
     d_mesto = models.CharField(max_length=100, blank=True, null=True)
     d_psc = models.CharField(max_length=10, blank=True, null=True)
     d_zeme = models.CharField(max_length=50, blank=True, null=True)
-    user = models.OneToOneField(AuthUser, models.DO_NOTHING)
+    user = models.OneToOneField(AuthUser, models.PROTECT)
 
     class Meta:
         managed = False
@@ -1134,8 +1110,8 @@ class ScheduleCalendarrelation(models.Model):
     object_id = models.IntegerField()
     distinction = models.CharField(max_length=20, blank=True, null=True)
     inheritable = models.BooleanField()
-    calendar = models.ForeignKey(ScheduleCalendar, models.DO_NOTHING)
-    content_type = models.ForeignKey(DjangoContentType, models.DO_NOTHING)
+    calendar = models.ForeignKey(ScheduleCalendar, models.PROTECT)
+    content_type = models.ForeignKey(DjangoContentType, models.PROTECT)
 
     class Meta:
         managed = False
@@ -1150,11 +1126,9 @@ class ScheduleEvent(models.Model):
     created_on = models.DateTimeField()
     updated_on = models.DateTimeField()
     end_recurring_period = models.DateTimeField(blank=True, null=True)
-    calendar = models.ForeignKey(
-        ScheduleCalendar, models.DO_NOTHING, blank=True, null=True
-    )
-    creator = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
-    rule = models.ForeignKey("ScheduleRule", models.DO_NOTHING, blank=True, null=True)
+    calendar = models.ForeignKey(ScheduleCalendar, models.PROTECT, blank=True, null=True)
+    creator = models.ForeignKey(AuthUser, models.PROTECT, blank=True, null=True)
+    rule = models.ForeignKey("ScheduleRule", models.PROTECT, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -1164,8 +1138,8 @@ class ScheduleEvent(models.Model):
 class ScheduleEventrelation(models.Model):
     object_id = models.IntegerField()
     distinction = models.CharField(max_length=20, blank=True, null=True)
-    content_type = models.ForeignKey(DjangoContentType, models.DO_NOTHING)
-    event = models.ForeignKey(ScheduleEvent, models.DO_NOTHING)
+    content_type = models.ForeignKey(DjangoContentType, models.PROTECT)
+    event = models.ForeignKey(ScheduleEvent, models.PROTECT)
 
     class Meta:
         managed = False
@@ -1182,7 +1156,7 @@ class ScheduleOccurrence(models.Model):
     original_end = models.DateTimeField()
     created_on = models.DateTimeField()
     updated_on = models.DateTimeField()
-    event = models.ForeignKey(ScheduleEvent, models.DO_NOTHING)
+    event = models.ForeignKey(ScheduleEvent, models.PROTECT)
 
     class Meta:
         managed = False
@@ -1217,7 +1191,7 @@ class TaboryTaboryprideti(models.Model):
     datum_storno = models.DateTimeField(blank=True, null=True)
     ip = models.GenericIPAddressField(blank=True, null=True)
     order_item_id = models.IntegerField(blank=True, null=True)
-    tabor = models.ForeignKey(MainTabory, models.DO_NOTHING, blank=True, null=True)
+    tabor = models.ForeignKey(MainTabory, models.PROTECT, blank=True, null=True)
     matka_email = models.CharField(max_length=100, blank=True, null=True)
     narodnost = models.CharField(max_length=100, blank=True, null=True)
     otec_email = models.CharField(max_length=200, blank=True, null=True)
@@ -1256,7 +1230,7 @@ class TaboryTaboryprirodicedeti(models.Model):
     datum_storno = models.DateTimeField(blank=True, null=True)
     ip = models.GenericIPAddressField(blank=True, null=True)
     order_item_id = models.IntegerField(blank=True, null=True)
-    tabor = models.ForeignKey(MainTabory, models.DO_NOTHING, blank=True, null=True)
+    tabor = models.ForeignKey(MainTabory, models.PROTECT, blank=True, null=True)
     dite3_datum_narozeni = models.CharField(max_length=50, blank=True, null=True)
     dite3_jmeno = models.CharField(max_length=200, blank=True, null=True)
     dite3_misto_narozeni = models.CharField(max_length=100, blank=True, null=True)

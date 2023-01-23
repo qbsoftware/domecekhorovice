@@ -2,7 +2,6 @@
 Django settings for domecekhorovice project.
 """
 
-from django.utils.translation import ugettext_lazy as _
 from leprikon.site.settings import *
 
 # Application definition

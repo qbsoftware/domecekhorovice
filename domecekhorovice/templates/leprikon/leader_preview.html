@@ -6,9 +6,7 @@
     </div>
 
     <div class="box-content">
-        {% if object.photo %}
-        <div class="col-sm-9">
-        {% endif %}
+        {% if object.photo %}<img class="right" src="{% thumbnail object.photo 200x200 %}" />{% endif %}
         {{ object.description | safe }}
         {% for group in object.get_subjects_by_types %}
         {% if group.subjects|filter_current_school_year:request.school_year %}
@@ -25,7 +23,7 @@
 
         {% if object.all_public_contacts %}
         <div class="row">
-            <label class="col-sm-3">{% trans 'Contact' %}:</label>
+            <label class="col-sm-3">{% trans 'contact' %}:</label>
             <div class="col-sm-6">
                 {% for contact in object.all_public_contacts %}
                 <div class="contact contact-{{ contact.contact_type }}">
@@ -44,26 +42,5 @@
             </a>
         </p>
         {% endif %}
-        {% if object.photo %}
-        </div>
-        <div class="col-sm-3">
-            <a href="{% thumbnail object.photo 1500x1500 %}" data-bs-toggle="lightbox" data-title="{{ object.photo.name }}">
-                <img class="right" alt="{{ object.photo.name }}" src="{% thumbnail object.photo 200x200 %}" />
-            </a>
-        </div>
-        {% endif %}
     </div>
 </div>
-
-{% include 'leprikon/static/ekko-lightbox.html' %}
-
-{% addtoblock 'js' %}
-<script>
-<!--
-$(document).delegate('*[data-bs-toggle="lightbox"]', 'click', function(event) {
-    event.preventDefault();
-    $(this).ekkoLightbox();
-});
--->
-</script>
-{% endaddtoblock %}

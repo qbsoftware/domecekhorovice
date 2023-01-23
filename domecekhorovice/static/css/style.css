@@ -95,6 +95,17 @@ nav.menu .submenu {
   color: #fff;
 }
 
+.school-year .active {
+  background-color: #3F4F54;
+}
+.school-year .active a,
+.school-year .active a:visited {
+  color: #fff;
+}
+.school-year .active a:hover {
+  color: #3F4F54;
+}
+
 a, a:visited {
   color: #3F4F54;
 }

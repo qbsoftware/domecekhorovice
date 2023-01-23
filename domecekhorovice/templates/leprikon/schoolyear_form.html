@@ -6,13 +6,13 @@
     <input type="hidden" name="school_year" value="" id="id_school_year_input"/>
 </form>
 
-<span class="dropdown">
+<span class="dropdown school-year">
   <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
     {% trans 'school year' %} {{ school_year_form.school_year.initial }}
   </button>
   <ul class="dropdown-menu">
     {% for school_year in school_year_form.fields.school_year.queryset %}
-    <li>
+    <li{% if school_year == school_year_form.school_year.initial %} class="active"{% endif %}>
         <a class="dropdown-item" href="javascript: $('#id_school_year_input').val({{ school_year.id }}); $('#id_school_year_form').submit();">
             {{ school_year }}
         </a>

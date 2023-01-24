@@ -172,6 +172,7 @@ class Command(BaseCommand):
                 place=self.places_by_pracoviste[krouzek.pracoviste_id],
                 name=krouzek.nazev[:150],
                 defaults=dict(
+                    registration_type="P",
                     description=krouzek.popis,
                     max_participants_count=krouzek.kapacita,
                     public=krouzek.publikovat,
@@ -210,6 +211,7 @@ class Command(BaseCommand):
                 start_date=tabor.tabor_od,
                 end_date=tabor.tabor_do,
                 defaults=dict(
+                    registration_type="P",
                     description=tabor.popis,
                     max_participants_count=tabor.kapacita,
                     public=tabor.publikovat,
@@ -236,6 +238,7 @@ class Command(BaseCommand):
                 start_date=akce.akce_od,
                 end_date=akce.akce_do,
                 defaults=dict(
+                    registration_type="P",
                     description=akce.popis,
                     public=akce.publikovat,
                     due_from=akce.akce_od - Timedelta(days=365),
@@ -265,6 +268,7 @@ class Command(BaseCommand):
                 start_date=soutez.soutez_od,
                 end_date=soutez.soutez_do,
                 defaults=dict(
+                    registration_type="P",
                     description=soutez.popis,
                     public=soutez.publikovat,
                     due_from=soutez.soutez_od - Timedelta(days=365),
